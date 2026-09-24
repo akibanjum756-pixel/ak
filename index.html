@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Free Fire UID Checker</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:
+        radial-gradient(circle at top,#5b0b18,#160308 55%,#050105);
+    color:white;
+    padding:20px;
+}
+
+.container{
+    width:100%;
+    max-width:480px;
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:25px;
+    padding:30px;
+    backdrop-filter:blur(20px);
+    box-shadow:0 20px 60px rgba(0,0,0,.6);
+}
+
+.logo{
+    text-align:center;
+    font-size:35px;
+    font-weight:900;
+    margin-bottom:5px;
+}
+
+.subtitle{
+    text-align:center;
+    color:#aaa;
+    margin-bottom:25px;
+}
+
+input,
+select{
+    width:100%;
+    padding:15px;
+    border:none;
+    outline:none;
+    border-radius:12px;
+    background:rgba(255,255,255,.1);
+    color:white;
+    font-size:15px;
+}
+
+select{
+    margin-top:12px;
+}
+
+option{
+    background:#1b0710;
+}
+
+button{
+    width:100%;
+    margin-top:15px;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(135deg,#ff1744,#ff5722);
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 25px rgba(255,23,68,.35);
+}
+
+button:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+.loader{
+    display:none;
+    text-align:center;
+    margin:25px 0;
+}
+
+.spinner{
+    width:35px;
+    height:35px;
+    border:4px solid rgba(255,255,255,.2);
+    border-top-color:#ff1744;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+    margin:auto;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+.error{
+    display:none;
+    margin-top:20px;
+    padding:15px;
+    border-radius:12px;
+    background:rgba(255,0,60,.12);
+    border:1px solid rgba(255,0,60,.4);
+    color:#ff8da5;
+    text-align:center;
+    font-size:14px;
+    line-height:1.4;
+}
+
+.profile{
+    display:none;
+    margin-top:25px;
+    padding:20px;
+    border-radius:20px;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.1);
+    animation:fade .5s ease;
+}
+
+@keyframes fade{
+    from{
+        opacity:0;
+        transform:translateY(15px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.avatar{
+    width:90px;
+    height:90px;
+    margin:auto;
+    border-radius:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:42px;
+    background:linear-gradient(135deg,#ff1744,#ff9800);
+    box-shadow:0 0 30px rgba(255,23,68,.4);
+}
+
+.player-name{
+    text-align:center;
+    font-size:24px;
+    font-weight:bold;
+    margin-top:12px;
+    word-break:break-word;
+}
+
+.uid{
+    text-align:center;
+    color:#aaa;
+    margin-top:5px;
+}
+
+.region{
+    text-align:center;
+    margin-top:7px;
+    color:#ff8095;
+    font-size:13px;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:20px;
+}
+
+.stat{
+    padding:14px;
+    border-radius:12px;
+    background:rgba(255,255,255,.06);
+}
+
+.stat span{
+    display:block;
+    color:#999;
+    font-size:12px;
+    margin-bottom:5px;
+}
+
+.stat strong{
+    font-size:16px;
+}
+
+.footer{
+    text-align:center;
+    color:#666;
+    font-size:12px;
+    margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="logo">
+        🔥 FREE FIRE
+    </div>
+
+    <div class="subtitle">
+        UID Player Information
+    </div>
+
+    <!-- UID -->
+    <input
+        type="text"
+        id="uid"
+        placeholder="Enter Free Fire UID"
+        inputmode="numeric"
+    >
+
+    <!-- REGION -->
+    <select id="region">
+        <option value="BD">🇧🇩 Bangladesh</option>
+        <option value="IND">🇮🇳 India</option>
+        <option value="SG">🇸🇬 Singapore</option>
+        <option value="BR">🇧🇷 Brazil</option>
+        <option value="US">🇺🇸 USA</option>
+        <option value="PK">🇵🇰 Pakistan</option>
+        <option value="ME">🌍 Middle East</option>
+    </select>
+
+    <!-- SEARCH -->
+    <button id="searchBtn" onclick="searchPlayer()">
+        🔍 Search Player
+    </button>
+
+    <!-- LOADING -->
+    <div class="loader" id="loader">
+        <div class="spinner"></div>
+        <p style="margin-top:10px;">Searching player...</p>
+    </div>
+
+    <!-- ERROR -->
+    <div class="error" id="error"></div>
+
+    <!-- PROFILE -->
+    <div class="profile" id="profile">
+        <div class="avatar">👤</div>
+
+        <div class="player-name" id="playerName">Player Name</div>
+
+        <div class="uid" id="playerUID">UID: -</div>
+
+        <div class="region" id="playerRegion">Region: -</div>
+
+        <div class="stats">
+            <div class="stat">
+                <span>LEVEL</span>
+                <strong id="level">-</strong>
+            </div>
+
+            <div class="stat">
+                <span>BR RANK</span>
+                <strong id="rank">-</strong>
+            </div>
+
+            <div class="stat">
+                <span>LIKES</span>
+                <strong id="likes">-</strong>
+            </div>
+
+            <div class="stat">
+                <span>CS RANK</span>
+                <strong id="csrank">-</strong>
+            </div>
+
+            <div class="stat">
+                <span>BR POINTS</span>
+                <strong id="brpoints">-</strong>
+            </div>
+
+            <div class="stat">
+                <span>CS POINTS</span>
+                <strong id="cspoints">-</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Free Fire UID Checker • Unofficial API
+    </div>
+
+</div>
+
+<script>
+async function searchPlayer(){
+    const uid = document.getElementById("uid").value.trim();
+    const region = document.getElementById("region").value;
+    const loader = document.getElementById("loader");
+    const profile = document.getElementById("profile");
+    const errorBox = document.getElementById("error");
+    const button = document.getElementById("searchBtn");
+
+    profile.style.display = "none";
+    errorBox.style.display = "none";
+
+    if(!uid || !/^\d+$/.test(uid) || uid.length < 6){
+        showError("Please enter a valid numeric UID.");
+        return;
+    }
+
+    loader.style.display = "block";
+    button.disabled = true;
+    button.innerText = "⏳ Searching...";
+
+    let playerData = null;
+
+    // Direct & Proxied Multi-API Request
+    const targetApis = [
+        `https://api.codetabs.com/v1/proxy?quest=https://glob-info2.vercel.app/info?uid=${uid}`,
+        `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://free-ff-api-src-5plp.onrender.com/api/v1/account?region=${region}&uid=${uid}`)}`,
+        `https://corsproxy.io/?https://ff-api-x.vercel.app/api/info?uid=${uid}`
+    ];
+
+    for (let apiUrl of targetApis) {
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 6000);
+
+            const res = await fetch(apiUrl, { signal: controller.signal });
+            clearTimeout(timeoutId);
+
+            if (res.ok) {
+                const result = await res.json();
+                const base = result.basicInfo || result.basicinfo || result.data?.basicInfo || result.data || result;
+
+                if (base && (base.nickname || base.name || base.AccountName)) {
+                    playerData = {
+                        nickname: base.nickname || base.name || base.AccountName,
+                        accountId: base.accountId || base.accountid || uid,
+                        region: base.region || region,
+                        level: base.level ?? "-",
+                        rank: base.rank ?? "-",
+                        liked: base.liked ?? base.likes ?? 0,
+                        csRank: base.csRank ?? base.csrank ?? "-",
+                        rankingPoints: base.rankingPoints ?? base.rankingpoints ?? 0,
+                        csRankingPoints: base.csRankingPoints ?? base.csrankingpoints ?? 0
+                    };
+                    break;
+                }
+            }
+        } catch (e) {
+            console.warn("API request failed:", apiUrl);
+        }
+    }
+
+    loader.style.display = "none";
+    button.disabled = false;
+    button.innerText = "🔍 Search Player";
+
+    if (!playerData) {
+        if (window.location.protocol === 'file:') {
+            showError("⚠️ Local File Mode Detected!\nDirect file opening blocks network API calls. Please run this file using 'Live Server' in VS Code or host it on Netlify / GitHub Pages.");
+        } else {
+            showError("⚠️ Unable to fetch data. Please check the UID & Region or try again later.");
+        }
+        return;
+    }
+
+    document.getElementById("playerName").innerText = playerData.nickname;
+    document.getElementById("playerUID").innerText = "UID: " + playerData.accountId;
+    document.getElementById("playerRegion").innerText = "Region: " + playerData.region;
+    document.getElementById("level").innerText = playerData.level;
+    document.getElementById("rank").innerText = playerData.rank;
+    document.getElementById("likes").innerText = formatNumber(playerData.liked);
+    document.getElementById("csrank").innerText = playerData.csRank;
+    document.getElementById("brpoints").innerText = formatNumber(playerData.rankingPoints);
+    document.getElementById("cspoints").innerText = formatNumber(playerData.csRankingPoints);
+
+    profile.style.display = "block";
+}
+
+function formatNumber(value){
+    if(value === undefined || value === null || value === "") return "-";
+    const number = Number(value);
+    return Number.isNaN(number) ? value : number.toLocaleString();
+}
+
+function showError(message){
+    const errorBox = document.getElementById("error");
+    errorBox.innerText = message;
+    errorBox.style.display = "block";
+}
+
+document.getElementById("uid").addEventListener("keydown", function(event){
+    if(event.key === "Enter"){
+        searchPlayer();
+    }
+});
+</script>
+
+</body>
+</html>
