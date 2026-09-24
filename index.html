@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Free Fire UID Checker</title>
 
 <style>
@@ -19,8 +18,7 @@ body{
     display:flex;
     justify-content:center;
     align-items:center;
-    background:
-        radial-gradient(circle at top,#5b0b18,#160308 55%,#050105);
+    background: radial-gradient(circle at top,#5b0b18,#160308 55%,#050105);
     color:white;
     padding:20px;
 }
@@ -49,8 +47,7 @@ body{
     margin-bottom:25px;
 }
 
-input,
-select{
+input, select{
     width:100%;
     padding:15px;
     border:none;
@@ -110,9 +107,7 @@ button:disabled{
 }
 
 @keyframes spin{
-    to{
-        transform:rotate(360deg);
-    }
+    to{ transform:rotate(360deg); }
 }
 
 .error{
@@ -124,6 +119,8 @@ button:disabled{
     border:1px solid rgba(255,0,60,.4);
     color:#ff8da5;
     text-align:center;
+    font-size:14px;
+    line-height:1.5;
 }
 
 .profile{
@@ -137,15 +134,8 @@ button:disabled{
 }
 
 @keyframes fade{
-    from{
-        opacity:0;
-        transform:translateY(15px);
-    }
-
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
+    from{ opacity:0; transform:translateY(15px); }
+    to{ opacity:1; transform:translateY(0); }
 }
 
 .avatar{
@@ -169,17 +159,11 @@ button:disabled{
     word-break:break-word;
 }
 
-.uid{
+.uid, .region{
     text-align:center;
     color:#aaa;
     margin-top:5px;
-}
-
-.region{
-    text-align:center;
-    margin-top:7px;
-    color:#ff8095;
-    font-size:13px;
+    font-size:14px;
 }
 
 .stats{
@@ -218,24 +202,11 @@ button:disabled{
 <body>
 
 <div class="container">
+    <div class="logo">🔥 FREE FIRE</div>
+    <div class="subtitle">UID Player Information</div>
 
-    <div class="logo">
-        🔥 FREE FIRE
-    </div>
+    <input type="text" id="uid" placeholder="Enter Free Fire UID" inputmode="numeric">
 
-    <div class="subtitle">
-        UID Player Information
-    </div>
-
-    <!-- UID -->
-    <input
-        type="text"
-        id="uid"
-        placeholder="Enter Free Fire UID"
-        inputmode="numeric"
-    >
-
-    <!-- REGION -->
     <select id="region">
         <option value="BD">🇧🇩 Bangladesh</option>
         <option value="IND">🇮🇳 India</option>
@@ -246,67 +217,32 @@ button:disabled{
         <option value="ME">🌍 Middle East</option>
     </select>
 
-    <!-- SEARCH -->
-    <button id="searchBtn" onclick="searchPlayer()">
-        🔍 Search Player
-    </button>
+    <button id="searchBtn" onclick="searchPlayer()">🔍 Search Player</button>
 
-    <!-- LOADING -->
     <div class="loader" id="loader">
         <div class="spinner"></div>
         <p style="margin-top:10px;">Searching player...</p>
     </div>
 
-    <!-- ERROR -->
     <div class="error" id="error"></div>
 
-    <!-- PROFILE -->
     <div class="profile" id="profile">
         <div class="avatar">👤</div>
-
         <div class="player-name" id="playerName">Player Name</div>
-
         <div class="uid" id="playerUID">UID: -</div>
-
         <div class="region" id="playerRegion">Region: -</div>
 
         <div class="stats">
-            <div class="stat">
-                <span>LEVEL</span>
-                <strong id="level">-</strong>
-            </div>
-
-            <div class="stat">
-                <span>BR RANK</span>
-                <strong id="rank">-</strong>
-            </div>
-
-            <div class="stat">
-                <span>LIKES</span>
-                <strong id="likes">-</strong>
-            </div>
-
-            <div class="stat">
-                <span>CS RANK</span>
-                <strong id="csrank">-</strong>
-            </div>
-
-            <div class="stat">
-                <span>BR POINTS</span>
-                <strong id="brpoints">-</strong>
-            </div>
-
-            <div class="stat">
-                <span>CS POINTS</span>
-                <strong id="cspoints">-</strong>
-            </div>
+            <div class="stat"><span>LEVEL</span><strong id="level">-</strong></div>
+            <div class="stat"><span>BR RANK</span><strong id="rank">-</strong></div>
+            <div class="stat"><span>LIKES</span><strong id="likes">-</strong></div>
+            <div class="stat"><span>CS RANK</span><strong id="csrank">-</strong></div>
+            <div class="stat"><span>BR POINTS</span><strong id="brpoints">-</strong></div>
+            <div class="stat"><span>CS POINTS</span><strong id="cspoints">-</strong></div>
         </div>
     </div>
 
-    <div class="footer">
-        Free Fire UID Checker • Unofficial API
-    </div>
-
+    <div class="footer">Free Fire UID Checker • Multi-API Gateway</div>
 </div>
 
 <script>
@@ -330,40 +266,41 @@ async function searchPlayer(){
     button.disabled = true;
     button.innerText = "⏳ Searching...";
 
-    const targetUrls = [
-        `https://free-ff-api-src-5plp.onrender.com/api/v1/account?region=${region}&uid=${uid}`,
-        `https://api.allorigins.win/get?url=${encodeURIComponent(`https://free-ff-api-src-5plp.onrender.com/api/v1/account?region=${region}&uid=${uid}`)}`,
-        `https://api.allorigins.win/get?url=${encodeURIComponent(`https://glob-info2.vercel.app/info?uid=${uid}`)}`
-    ];
-
     let playerData = null;
 
-    for (let url of targetUrls) {
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 9000); // 9 sec timeout for Render cold-starts
+    // List of active API endpoints
+    const apiEndpoints = [
+        `https://api.uniplay.id/ff/info?uid=${uid}`,
+        `https://ff-api-src.vercel.app/api/info?uid=${uid}&region=${region}`,
+        `https://api.allorigins.win/get?url=${encodeURIComponent(`https://shop.garena.my/api/auth/player_id/login`)}`
+    ];
 
-            const res = await fetch(url, { signal: controller.signal });
+    for (let index = 0; index < apiEndpoints.length; index++) {
+        const url = apiEndpoints[index];
+        try {
+            console.log(`[Attempt ${index + 1}] Requesting:`, url);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 6000);
+
+            const response = await fetch(url, { signal: controller.signal });
             clearTimeout(timeoutId);
 
-            if (res.ok) {
-                let json = await res.json();
+            if (response.ok) {
+                let data = await response.json();
                 
-                // Handle AllOrigins JSON wrapper
-                if (json && json.contents) {
-                    try {
-                        json = JSON.parse(json.contents);
-                    } catch (e) {}
+                if (data.contents) {
+                    try { data = JSON.parse(data.contents); } catch(e){}
                 }
 
-                const parsed = parseResponse(json, uid, region);
-                if (parsed) {
+                console.log(`[Attempt ${index + 1}] Received Data:`, data);
+                const parsed = parsePlayerData(data, uid, region);
+                if (parsed && parsed.nickname) {
                     playerData = parsed;
                     break;
                 }
             }
-        } catch (e) {
-            console.warn("Failed endpoint:", url);
+        } catch (err) {
+            console.warn(`[Attempt ${index + 1}] Failed:`, err.message);
         }
     }
 
@@ -372,10 +309,11 @@ async function searchPlayer(){
     button.innerText = "🔍 Search Player";
 
     if (!playerData) {
-        showError("⚠️ Player not found or API server is waking up. Please double check UID and click Search again in 10 seconds.");
+        showError("⚠️ Unable to fetch data from API servers right now. Public APIs might be temporarily down or rate-limited. Try again shortly.");
         return;
     }
 
+    // Update UI
     document.getElementById("playerName").innerText = playerData.nickname;
     document.getElementById("playerUID").innerText = "UID: " + playerData.accountId;
     document.getElementById("playerRegion").innerText = "Region: " + playerData.region;
@@ -389,43 +327,42 @@ async function searchPlayer(){
     profile.style.display = "block";
 }
 
-function parseResponse(res, uid, region) {
+function parsePlayerData(res, defaultUid, defaultRegion) {
     if (!res) return null;
-
-    const base = res.basicInfo || res.basicinfo || res.data?.basicInfo || res.data || res;
-    const name = base.nickname || base.name || base.AccountName;
+    
+    // Normalize properties from different API structures
+    const info = res.basicInfo || res.basicinfo || res.data?.basicInfo || res.data || res;
+    const name = info.nickname || info.name || info.AccountName || info.userName || res.nickname;
 
     if (!name) return null;
 
     return {
         nickname: name,
-        accountId: base.accountId || base.accountid || uid,
-        region: base.region || region,
-        level: base.level ?? "-",
-        rank: base.rank ?? "-",
-        liked: base.liked ?? base.likes ?? 0,
-        csRank: base.csRank ?? base.csrank ?? "-",
-        rankingPoints: base.rankingPoints ?? base.rankingpoints ?? 0,
-        csRankingPoints: base.csRankingPoints ?? base.csrankingpoints ?? 0
+        accountId: info.accountId || info.accountid || defaultUid,
+        region: info.region || defaultRegion,
+        level: info.level ?? "N/A",
+        rank: info.rank ?? "N/A",
+        liked: info.liked ?? info.likes ?? 0,
+        csRank: info.csRank ?? info.csrank ?? "N/A",
+        rankingPoints: info.rankingPoints ?? info.rankingpoints ?? 0,
+        csRankingPoints: info.csRankingPoints ?? info.csrankingpoints ?? 0
     };
 }
 
-function formatNumber(value){
-    if(value === undefined || value === null || value === "") return "-";
-    const number = Number(value);
-    return Number.isNaN(number) ? value : number.toLocaleString();
+function formatNumber(val) {
+    if (val === undefined || val === null || val === "" || val === "N/A") return "-";
+    const num = Number(val);
+    return isNaN(num) ? val : num.toLocaleString();
 }
 
-function showError(message){
+function showError(msg) {
     const errorBox = document.getElementById("error");
-    errorBox.innerText = message;
+    errorBox.innerText = msg;
     errorBox.style.display = "block";
 }
 
-document.getElementById("uid").addEventListener("keydown", function(event){
-    if(event.key === "Enter"){
-        searchPlayer();
-    }
+document.getElementById("uid").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") searchPlayer();
 });
 </script>
 
